@@ -28,7 +28,7 @@ export class InstallerPanel {
     // Otherwise, create a new panel.
     const panel = vscode.window.createWebviewPanel(
       InstallerPanel.viewType,
-      "VSinder",
+      "VSpackagem",
       column || vscode.ViewColumn.One,
       {
         // Enable javascript in the webview
@@ -150,7 +150,7 @@ export class InstallerPanel {
   private _getHtmlForWebview(webview: vscode.Webview) {
     // // And the uri we use to load this script in the webview
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "main.js")
+      vscode.Uri.joinPath(this._extensionUri, "out/compiled", "App.js")
     );
 
     // Uri to load styles into webview
@@ -184,8 +184,6 @@ export class InstallerPanel {
         </script>
 			</head>
       <body>
-      <h1>Hello world my package</h1>
-      <input type="text" /> <button id="search">Search</button>
 			</body>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</html>`;

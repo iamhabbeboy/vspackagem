@@ -1,6 +1,6 @@
 {
-  "name": "packagem",
-  "displayName": "packagem",
+  "name": "vspackagem",
+  "displayName": "vspackagem",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -10,21 +10,28 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:packagem.helloWorldx"
+    "onCommand:packagem.helloWorldx",
+    "onCommand:packagem.refresh"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "packagem.helloWorldx",
-        "title": "Hello Worldx"
+        "command": "vspackagem.search",
+        "category": "VSpackagem",
+        "title": "Search & Install Packages"
+      },
+      {
+        "command": "vspackagem.refresh",
+        "category": "VSpackagem",
+        "title": "Refresh"
       }
     ]
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",
-    "compile": "webpack --config ./build/node-extension.webpack.config.js",
-    "watch": "concurrently \"rollup -c -w\" \"webpack --watch --config ./webpack.config.js\"",
+    "compile": "webpack --config ./webpack.config.js",
+    "watch": "concurrently \"rollup -c -w\" \"tsc -p ./\" \"webpack --config ./webpack.config.js\"",
     "package": "webpack --mode production --devtool hidden-source-map --config ./webpack.config.js",
     "test-compile": "tsc -p ./",
     "test-watch": "tsc -watch -p ./",
