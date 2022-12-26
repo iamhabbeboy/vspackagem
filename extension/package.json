@@ -19,14 +19,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "vspackagem-sidebar",
+          "id": "vspackagem-sidebar-view",
           "title": "VSPackagem",
           "icon": "media/package.svg"
         }
       ]
     },
     "views": {
-      "vsinder-sidebar-view": [
+      "vspackagem-sidebar-view": [
         {
           "type": "webview",
           "id": "vspackagem-sidebar",
