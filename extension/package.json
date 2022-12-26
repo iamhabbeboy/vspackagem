@@ -58,7 +58,8 @@
     "test-watch": "tsc -watch -p ./",
     "pretest": "yarn run test-compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "amb": "svelte compile webviews/components/Sidebar.svelte --out=Sidebar.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",

@@ -15,7 +15,6 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("vspackagem.search", () => {
       InstallerPanel.createOrShow(context.extensionUri);
-      vscode.window.showInformationMessage("Hello world");
     })
   );
 
