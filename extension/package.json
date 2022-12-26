@@ -10,11 +10,32 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:packagem.helloWorldx",
-    "onCommand:packagem.refresh"
+    "onCommand:vspackagem.search",
+    "onCommand:vspackagem.refresh",
+    "onView:vspackagem-sidebar"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vspackagem-sidebar",
+          "title": "VSPackagem",
+          "icon": "media/package.svg"
+        }
+      ]
+    },
+    "views": {
+      "vsinder-sidebar-view": [
+        {
+          "type": "webview",
+          "id": "vspackagem-sidebar",
+          "name": "VSPackagem",
+          "icon": "media/package.svg",
+          "contextualTitle": "VSPackagem"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "vspackagem.search",
