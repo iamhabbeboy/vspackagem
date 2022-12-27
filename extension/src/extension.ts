@@ -19,7 +19,9 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("vspackagem.refresh", () => {
+    vscode.commands.registerCommand("vspackagem.refresh", async () => {
+      await vscode.commands.executeCommand("workbench.action.closeSidebar"); 
+      await vscode.commands.executeCommand("workbench.view.extension.vspackagem-sidebar-view"); 
       InstallerPanel.kill();
       InstallerPanel.createOrShow(context.extensionUri);
       // setTimeout(() => {
