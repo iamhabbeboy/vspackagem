@@ -32,22 +32,34 @@
     const response = await fetch(`${apiBaseUrl}/search?q=${query}&vendor=npm`);
     pkgs = await response.json();
   };
+
+  const installer = () => {
+    tsvscode.postMessage({ type: "onInstall", value: "yarn add axios" });
+  };
+
+  const handleSelection = (vendor: string) => {
+    console.log("Hello world " + vendor)
+  };
+  // workbench.action.terminal.ne
 </script>
 
 <h3>Search Package</h3>
 <input type="text" bind:value={query} />
+<span on:click={handleSelection('goget')}>
 <img
   src="https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/go_qo9jg9.png"
   width="20"
   height="20"
   alt=""
 />
+</span>
 &nbsp;
 <img
   src="https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/php_tczkal.png"
   width="20"
   height="20"
   alt=""
+  on:click={handleSelection('php')}
 />
 &nbsp;
 <img
@@ -55,8 +67,10 @@
   width="20"
   height="20"
   alt=""
+  on:click={handleSelection('npm')}
 />
 <button on:click={search}>Search</button>
+
 {#if pkgs.result.length == 0}
   <p>No package found</p>
 {:else}
@@ -79,7 +93,7 @@
           <p>Lorem ipsum...</p>
           <div style="display:flex;justify-content:space-between;width:100%">
             <p style="padding-top:2px">iamhabbeboy</p>
-            <button class="button-sm">Install</button>
+            <button class="button-sm" on:click={installer}>Install</button>
           </div>
         </div>
       </li>
@@ -108,5 +122,9 @@
     padding: 3px;
     width: auto;
     border-radius: 2px;
+  }
+
+  img {
+    cursor: pointer;
   }
 </style>

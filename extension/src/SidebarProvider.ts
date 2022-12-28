@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { apiBaseUrl } from "./constant";
 import { getNonce } from "./getNonce";
+const { exec } = require("node:child_process");
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -101,23 +102,27 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         //       SnippetStatus.hide();
         //       break;
         //     }
-        //     case "view-code-card": {
-        //       ViewCodeCardPanel.createOrShow(this._extensionUri, data.value);
-        //       break;
-        //     }
-        //     case "start-swiping": {
-        //       SwiperPanel.createOrShow(this._extensionUri);
-        //       break;
-        //     }
-        //     case "login": {
-        //       authenticate((payload) => {
-        //         webviewView.webview.postMessage({
-        //           command: "login-complete",
-        //           payload,
-        //         });
-        //       });
-        //       break;
-        //     }
+        case "onInstall": {
+          if (!data.value) {
+            return;
+          }
+          const fileName = vscode.window.activeTextEditor?.document.fileName;
+          const f = vscode.workspace.workspaceFolders
+          ?.map((folder) => folder.uri.fsPath)
+          .filter((fsPath) => fileName?.startsWith(fsPath))[0];
+       
+          const cmd = `cd ${f} && ${data.value}`;
+          exec(cmd, (err: any, output: any) => {
+            if (err) {
+              vscode.window.showErrorMessage(`could not execute command: ${err}`);
+              return;
+            }
+            console.log("Output: \n", output);
+          });
+          vscode.window.showInformationMessage(`${data.value} is Installed`);
+          vscode.window.showWarningMessage('Hello world!');
+          break;
+        }
         case "onInfo": {
           if (!data.value) {
             return;
@@ -170,7 +175,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
         -->
-        <meta http-equiv="Content-Security-Policy" content="img-src 'self' https: data:; style-src 'unsafe-inline' ${webview.cspSource}; script-src 'nonce-${nonce}';">
+        <meta http-equiv="Content-Security-Policy" content="img-src 'self' https: data:; style-src 'unsafe-inline' ${
+          webview.cspSource
+        }; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
