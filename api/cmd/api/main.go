@@ -7,6 +7,7 @@ import (
 
 func main() {
 	r := gin.Default()
+	router.UseCors(r)
 	router.DefineRoute(r)
 	r.Run(":9200")
 }

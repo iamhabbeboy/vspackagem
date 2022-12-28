@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { apiBaseUrl } from "./constant";
 import { getNonce } from "./getNonce";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
@@ -174,9 +175,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         <link href="${styleMainUri}" rel="stylesheet">
+        <script nonce="${nonce}">
+          const tsvscode = acquireVsCodeApi() 
+          const apiBaseUrl = ${JSON.stringify(apiBaseUrl)}
+        </script>
 			</head>
       <body>
-				<script nonce="${nonce}" src="${scriptUri}"></script>
+      <script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
   }
