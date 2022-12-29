@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Image from "./Image.svelte";
+
   interface PkgType {
     Name: string;
     Description: string;
@@ -24,51 +26,34 @@
   };
 
   let query: string = "";
+  let vendor: string = "";
 
   const search = async () => {
     if (query === "") {
       return;
     }
-    const response = await fetch(`${apiBaseUrl}/search?q=${query}&vendor=npm`);
-    pkgs = await response.json();
+    console.log(vendor)
+    // const response = await fetch(`${apiBaseUrl}/search?q=${query}&vendor=npm`);
+    // pkgs = await response.json();
   };
 
   const installer = () => {
     tsvscode.postMessage({ type: "onInstall", value: "yarn add axios" });
   };
 
-  const handleSelection = (vendor: string) => {
-    console.log("Hello world " + vendor)
+  const handleSelection = (publisher: string) => {
+    vendor = publisher;
   };
-  // workbench.action.terminal.ne
+
 </script>
 
 <h3>Search Package</h3>
 <input type="text" bind:value={query} />
-<span on:click={handleSelection('goget')}>
-<img
-  src="https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/go_qo9jg9.png"
-  width="20"
-  height="20"
-  alt=""
-/>
-</span>
+<Image src={"https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/go_qo9jg9.png"} on:click={() => handleSelection("goget")}/>
 &nbsp;
-<img
-  src="https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/php_tczkal.png"
-  width="20"
-  height="20"
-  alt=""
-  on:click={handleSelection('php')}
-/>
+<Image src={"https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/php_tczkal.png"} on:click={() => handleSelection("composer")}/>
 &nbsp;
-<img
-  src="https://res.cloudinary.com/denj7z5ec/image/upload/v1669411991/js_zgy2wh.png"
-  width="20"
-  height="20"
-  alt=""
-  on:click={handleSelection('npm')}
-/>
+<Image src={"https://res.cloudinary.com/denj7z5ec/image/upload/v1669411991/js_zgy2wh.png"} on:click={() => handleSelection("npm")}/>
 <button on:click={search}>Search</button>
 
 {#if pkgs.result.length == 0}
