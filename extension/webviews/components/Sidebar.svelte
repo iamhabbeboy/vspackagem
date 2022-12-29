@@ -1,5 +1,6 @@
 <script lang="ts">
   import Image from "./Image.svelte";
+  import Package from "./Package.svelte";
 
   interface PkgType {
     Name: string;
@@ -14,32 +15,22 @@
   }
 
   let pkgs: PkgsType = {
-    result: [
-      {
-        Name: "camera",
-        Description: "hello camera",
-        Version: "0.1.1",
-        Published: "3 years",
-        Author: "abbey",
-      },
-    ],
+    result: [],
   };
 
   let query: string = "";
   let vendor: string = "";
   let selected: string = "";
+  let isLoading: boolean = false;
 
   const search = async () => {
     if (query === "") {
       return;
     }
-    console.log(vendor)
-    // const response = await fetch(`${apiBaseUrl}/search?q=${query}&vendor=npm`);
-    // pkgs = await response.json();
-  };
-
-  const installer = () => {
-    tsvscode.postMessage({ type: "onInstall", value: "yarn add axios" });
+    pkgs.result = [];
+    const response = await fetch(`${apiBaseUrl}/search?q=${query}&vendor=${vendor}`);
+    pkgs = await response.json();
+    isLoading = true;
   };
 
   const handleSelection = (publisher: string) => {
@@ -64,27 +55,7 @@
 {:else}
   <ul>
     {#each pkgs.result as pkg}
-      <li>
-        <div style="padding-top: 2px">
-          <img
-            src="https://res.cloudinary.com/denj7z5ec/image/upload/v1669411991/js_zgy2wh.png"
-            width="20"
-            height="20"
-            alt=""
-          />
-        </div>
-        <div style="padding-left: 5px;width:90%">
-          <div style="display:flex;justify-content:space-between;width:100%">
-            <b>{pkg.Name}</b>
-            <span>v1.0.0</span>
-          </div>
-          <p>Lorem ipsum...</p>
-          <div style="display:flex;justify-content:space-between;width:100%">
-            <p style="padding-top:2px">iamhabbeboy</p>
-            <button class="button-sm" on:click={installer}>Install</button>
-          </div>
-        </div>
-      </li>
+      <Package pkg={pkg} vendor={vendor} />
     {/each}
   </ul>
 {/if}
@@ -93,26 +64,5 @@
   ul {
     margin: 0;
     padding: 0;
-  }
-  li {
-    list-style-type: none;
-    display: flex;
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-
-  li:hover {
-    background: rgba(0, 0, 0, 0.5);
-    cursor: pointer;
-  }
-
-  .button-sm {
-    padding: 3px;
-    width: auto;
-    border-radius: 2px;
-  }
-
-  img {
-    cursor: pointer;
   }
 </style>
