@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   export let pkg: any;
   export let vendor: string;
+
   let img = "https://res.cloudinary.com/denj7z5ec/image/upload/v1669411991/js_zgy2wh.png";
 
   onMount(() => {
@@ -23,8 +24,9 @@
     }
   });
 
-  const installer = () => {
-    tsvscode.postMessage({ type: "onInstall", value: "yarn add axios" });
+  const installer = (name: string) => {
+    const command = `${vendor}::${name}`;
+    tsvscode.postMessage({ type: "onInstall", value: command });
   };
 </script>
 
@@ -40,7 +42,7 @@
     <p>{pkg.Description}</p>
     <div style="display:flex;justify-content:space-between;width:100%">
       <p style="padding-top:2px">{pkg.Author}</p>
-      <button class="button-sm" on:click={installer}>Install</button>
+      <button class="button-sm" on:click={() => installer(pkg.Name)}>Install</button>
     </div>
   </div>
 </li>

@@ -106,12 +106,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           if (!data.value) {
             return;
           }
+          let command = "";
+          let [vendor, name] = data.value.split("::");
+          if(vendor === "npm") {
+            command = `yarn add ${name}`;
+          } else if(vendor === "goget") {
+            command = `go get ${name}`;
+          } else {
+            command = `composer require ${name}`;
+          }
           const fileName = vscode.window.activeTextEditor?.document.fileName;
           const f = vscode.workspace.workspaceFolders
           ?.map((folder) => folder.uri.fsPath)
           .filter((fsPath) => fileName?.startsWith(fsPath))[0];
-       
-          const cmd = `cd ${f} && ${data.value}`;
+
+          const cmd = `cd ${f} && ls | grep composer.lock`;
+          // console.log(t);
+          // const cmd = `cd ${f} && ${data.value}`;
           exec(cmd, (err: any, output: any) => {
             if (err) {
               vscode.window.showErrorMessage(`could not execute command: ${err}`);
@@ -120,7 +131,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             console.log("Output: \n", output);
           });
           vscode.window.showInformationMessage(`${data.value} is Installed`);
-          vscode.window.showWarningMessage('Hello world!');
           break;
         }
         case "onInfo": {
