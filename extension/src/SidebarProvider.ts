@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { apiBaseUrl } from "./constant";
 import { getNonce } from "./getNonce";
 const { exec } = require("node:child_process");
+const fs = require('fs');
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -106,31 +107,44 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           if (!data.value) {
             return;
           }
-          let command = "";
+          let command, module;
           let [vendor, name] = data.value.split("::");
-          if(vendor === "npm") {
-            command = `yarn add ${name}`;
-          } else if(vendor === "goget") {
-            command = `go get ${name}`;
-          } else {
-            command = `composer require ${name}`;
+          switch (vendor) {
+            case "npm":
+              command = `yarn add ${name}`;
+              module = "yarn.json";
+              break;
+            case "goget":
+              command = `go get ${name}`;
+              module = "go.mod";
+              break;
+            default:
+              command = `composer require ${name}`;
+              module = "composer.lock";
+              break;
           }
           const fileName = vscode.window.activeTextEditor?.document.fileName;
           const f = vscode.workspace.workspaceFolders
-          ?.map((folder) => folder.uri.fsPath)
-          .filter((fsPath) => fileName?.startsWith(fsPath))[0];
+            ?.map((folder) => folder.uri.fsPath)
+            .filter((fsPath) => fileName?.startsWith(fsPath))[0];
 
-          const cmd = `cd ${f} && ls | grep composer.lock`;
-          // console.log(t);
-          // const cmd = `cd ${f} && ${data.value}`;
+          const p = `${f}/${module}`;
+          var cmd = `cd ${f} && ${command}`;
+          if (vendor === "npm" && !fs.existsSync(p)) {
+            //file not exist
+            cmd = `cd ${f} && npm install ${name}`;
+          }
+
           exec(cmd, (err: any, output: any) => {
             if (err) {
-              vscode.window.showErrorMessage(`could not execute command: ${err}`);
+              vscode.window.showErrorMessage(
+                `could not execute command: ${err}`
+              );
               return;
             }
             console.log("Output: \n", output);
+            vscode.window.showErrorMessage(`${data.value} is Installed`);
           });
-          vscode.window.showInformationMessage(`${data.value} is Installed`);
           break;
         }
         case "onInfo": {
