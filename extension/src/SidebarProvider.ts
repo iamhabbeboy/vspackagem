@@ -134,17 +134,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             //file not exist
             cmd = `cd ${f} && npm install ${name}`;
           }
-
-          exec(cmd, (err: any, output: any) => {
-            if (err) {
-              vscode.window.showErrorMessage(
-                `could not execute command: ${err}`
-              );
-              return;
-            }
-            console.log("Output: \n", output);
-            vscode.window.showErrorMessage(`${data.value} is Installed`);
-          });
+          vscode.window.showInformationMessage(`${name} is about to be Installed`);
+          // exec(cmd, (err: any, output: any) => {
+          //   if (err) {
+          //     vscode.window.showErrorMessage(
+          //       `Could not install ${name}: ${err}`
+          //     );
+          //     return;
+          //   }
+          //   console.log("Output: \n", output);
+          // });
           break;
         }
         case "onInfo": {
@@ -184,6 +183,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const scriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.js")
     );
+    const assetUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media")
+    );
+
     const styleMainUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.css")
     );
@@ -202,6 +205,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <meta http-equiv="Content-Security-Policy" content="img-src 'self' https: data:; style-src 'unsafe-inline' ${
           webview.cspSource
         }; script-src 'nonce-${nonce}';">
+        <meta name="image-path" content="${assetUri}"  />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
@@ -216,4 +220,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			</body>
 			</html>`;
   }
+
+//   private _getWebviewOptions(   
+//     extensionUri: vscode.Uri
+// ): vscode.WebviewOptions {
+//     return {    
+//         enableScripts: true,
+//         localResourceRoots: [
+//             vscode.Uri.joinPath(extensionUri, 'media'),
+//         ]
+//     };
+// }
+
 }

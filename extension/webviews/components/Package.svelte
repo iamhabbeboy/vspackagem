@@ -2,8 +2,10 @@
   import { onMount } from "svelte";
   export let pkg: any;
   export let vendor: string;
+  let isInstalling: boolean = false;
 
-  let img = "https://res.cloudinary.com/denj7z5ec/image/upload/v1669411991/js_zgy2wh.png";
+  let img =
+    "https://res.cloudinary.com/denj7z5ec/image/upload/v1669411991/js_zgy2wh.png";
 
   onMount(() => {
     switch (vendor) {
@@ -25,8 +27,10 @@
   });
 
   const installer = (name: string) => {
+    isInstalling = true;
     const command = `${vendor}::${name}`;
     tsvscode.postMessage({ type: "onInstall", value: command });
+    isInstalling = false;
   };
 </script>
 
@@ -42,7 +46,17 @@
     <p>{pkg.Description}</p>
     <div style="display:flex;justify-content:space-between;width:100%">
       <p style="padding-top:2px">{pkg.Author}</p>
-      <button class="button-sm" on:click={() => installer(pkg.Name)}>Install</button>
+      <button class="button-sm" on:click={() => installer(pkg.Name)}
+        >Install
+        {#if isInstalling === true}
+          <img
+            src="https://res.cloudinary.com/denj7z5ec/image/upload/v1673626970/loader_ugnkvf.svg"
+            width="10"
+            height="10"
+            alt=""
+          />
+        {/if}
+      </button>
     </div>
   </div>
 </li>

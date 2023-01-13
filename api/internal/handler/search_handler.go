@@ -38,15 +38,14 @@ func (s *SearchHandler) Find(c *gin.Context) {
 		resp := packages.NewPackageService(data)
 		result, err := resp.GetData()
 		if err != nil {
-			c.String(405, err.Error())
+			c.JSON(405, gin.H{
+				"status": false,
+				"result": err.Error(),
+			})
 		}
 
-		// j, err := json.Marshal(result)
-		// if err != nil {
-		// 	c.String(405, err.Error())
-		// }
-
 		c.JSON(200, gin.H{
+			"status": true,
 			"result": result,
 		})
 	} else {

@@ -11,10 +11,12 @@
   }
 
   interface PkgsType {
+    status: boolean;
     result: PkgType[];
   }
 
   let pkgs: PkgsType = {
+    status: false,
     result: [],
   };
 
@@ -27,35 +29,58 @@
     if (query === "") {
       return;
     }
-    pkgs.result = [];
-    const response = await fetch(`${apiBaseUrl}/search?q=${query}&vendor=${vendor}`);
+    isLoading = true
+    const response = await fetch(
+      `${apiBaseUrl}/search?q=${query}&vendor=${vendor}`
+    );
     pkgs = await response.json();
-    isLoading = true;
+    isLoading = false;
   };
 
-  const handleSelection = (publisher: string) => {
-    vendor = publisher;
-    selected = "selected";
-  };
+  // const media = document.querySelector("meta[name=image-path]");
+  // const filepath = media?.getAttribute("content");
 
+  const handleSelection = (event: any) => {
+    vendor = event.detail.lang;
+    // selected = "selected";
+  };
 </script>
 
 <h3>Search Package</h3>
 <input type="text" bind:value={query} />
 
-<Image selected={selected} src={"https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/go_qo9jg9.png"} on:click={() => handleSelection("goget")}/>
+<Image
+  selected="goget"
+  on:message={handleSelection}
+  src={"https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/go_qo9jg9.png"}
+/>
 &nbsp;
-<Image selected={selected} src={"https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/php_tczkal.png"} on:click={() => handleSelection("composer")}/>
+<Image
+  selected="composer"
+  on:message={handleSelection}
+  src={"https://res.cloudinary.com/denj7z5ec/image/upload/v1669412388/php_tczkal.png"}
+/>
 &nbsp;
-<Image selected={selected} src={"https://res.cloudinary.com/denj7z5ec/image/upload/v1669411991/js_zgy2wh.png"} on:click={() => handleSelection("npm")}/>
-<button on:click={search}>Search</button>
+<Image
+  selected="npm"
+  on:message={handleSelection}
+  src={"https://res.cloudinary.com/denj7z5ec/image/upload/v1669411991/js_zgy2wh.png"}
+/>
+<button on:click={search} disabled={!!isLoading}>Search</button>
 
-{#if pkgs.result.length == 0}
+{#if isLoading === true}
+  <img
+    src="https://res.cloudinary.com/denj7z5ec/image/upload/v1673626970/loader_ugnkvf.svg"
+    width="20"
+    height="20"
+    alt=""
+  />
+{:else if isLoading === false && pkgs.status === true && pkgs.result.length == 0}
   <p>No package found</p>
 {:else}
   <ul>
     {#each pkgs.result as pkg}
-      <Package pkg={pkg} vendor={vendor} />
+      <Package {pkg} {vendor} />
     {/each}
   </ul>
 {/if}
