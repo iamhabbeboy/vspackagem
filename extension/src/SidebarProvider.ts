@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import { apiBaseUrl } from "./constant";
 import { getNonce } from "./getNonce";
-const { exec } = require("node:child_process");
-const fs = require('fs');
+import { PackageManager } from "./PackageManager";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -23,127 +22,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
+      console.log(data);
       switch (data.type) {
-        //     case "report": {
-        //       const message = await vscode.window.showInputBox({
-        //         placeHolder: "why are you reporting this user?",
-        //       });
-        //       if (message) {
-        //         await mutationNoErr(`/report`, { message, ...data.value });
-        //         webviewView.webview.postMessage({
-        //           command: "report-done",
-        //           data,
-        //         });
-        //         vscode.window.showInformationMessage("Thank you for reporting!");
-        //       }
-        //       break;
-        //     }
-        //     case "unmatch": {
-        //       const y = await vscode.window.showInformationMessage(
-        //         `Are you sure you want to unmatch "${data.value.userName}"?`,
-        //         "Yes",
-        //         "No"
-        //       );
-        //       if (y === "Yes") {
-        //         try {
-        //           await mutation(`/unmatch`, { userId: data.value.userId });
-        //           webviewView.webview.postMessage({
-        //             command: "unmatch-done",
-        //             payload: {},
-        //           });
-        //           vscode.window.showInformationMessage(`You unmatched "${data.value.userName}"`);
-        //         } catch {}
-        //       }
-        //       break;
-        //     }
-        //     case "send-tokens": {
-        //       webviewView.webview.postMessage({
-        //         command: "init-tokens",
-        //         payload: {
-        //           accessToken: Util.getAccessToken(),
-        //           refreshToken: Util.getRefreshToken(),
-        //         },
-        //       });
-        //       break;
-        //     }
-        //     case "logout": {
-        //       await Util.globalState.update(accessTokenKey, "");
-        //       await Util.globalState.update(refreshTokenKey, "");
-        //       SwiperPanel.kill();
-        //       ViewCodeCardPanel.kill();
-        //       break;
-        //     }
-        //     case "delete-account": {
-        //       const y = await vscode.window.showInformationMessage(
-        //         "Are you sure you want to delete your account?",
-        //         "yes",
-        //         "no"
-        //       );
-        //       if (y === "yes") {
-        //         try {
-        //           await mutation("/account/delete", {});
-        //           await Util.globalState.update(accessTokenKey, "");
-        //           await Util.globalState.update(refreshTokenKey, "");
-        //           webviewView.webview.postMessage({
-        //             command: "account-deleted",
-        //             payload: {},
-        //           });
-        //           vscode.window.showInformationMessage("successfully deleted");
-        //           SwiperPanel.kill();
-        //           ViewCodeCardPanel.kill();
-        //         } catch {}
-        //       }
-        //       break;
-        //     }
-        //     case "show-snippet-status": {
-        //       SnippetStatus.show();
-        //       break;
-        //     }
-        //     case "hide-snippet-status": {
-        //       SnippetStatus.hide();
-        //       break;
-        //     }
         case "onInstall": {
           if (!data.value) {
             return;
           }
-          let command, module;
-          let [vendor, name] = data.value.split("::");
-          switch (vendor) {
-            case "npm":
-              command = `yarn add ${name}`;
-              module = "yarn.json";
-              break;
-            case "goget":
-              command = `go get ${name}`;
-              module = "go.mod";
-              break;
-            default:
-              command = `composer require ${name}`;
-              module = "composer.lock";
-              break;
-          }
-          const fileName = vscode.window.activeTextEditor?.document.fileName;
-          const f = vscode.workspace.workspaceFolders
-            ?.map((folder) => folder.uri.fsPath)
-            .filter((fsPath) => fileName?.startsWith(fsPath))[0];
-
-          const p = `${f}/${module}`;
-          var cmd = `cd ${f} && ${command}`;
-          if (vendor === "npm" && !fs.existsSync(p)) {
-            //file not exist
-            cmd = `cd ${f} && npm install ${name}`;
-          }
-          vscode.window.showInformationMessage(`${name} is about to be Installed`);
-          // exec(cmd, (err: any, output: any) => {
-          //   if (err) {
-          //     vscode.window.showErrorMessage(
-          //       `Could not install ${name}: ${err}`
-          //     );
-          //     return;
-          //   }
-          //   console.log("Output: \n", output);
-          // });
+          console.log("Hello world");
+          // new PackageManager().install(data.value);
           break;
         }
         case "onInfo": {
@@ -160,11 +46,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           vscode.window.showErrorMessage(data.value);
           break;
         }
-        // case "tokens": {
-        //   await Util.globalState.update(accessTokenKey, data.accessToken);
-        //   await Util.globalState.update(refreshTokenKey, data.refreshToken);
-        //   break;
-        // }
       }
     });
   }

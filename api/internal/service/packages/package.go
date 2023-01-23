@@ -1,20 +1,24 @@
 package packages
 
+import (
+	"log"
+)
+
 type PackageManager interface {
 	GetData() ([]Package, error)
 }
 
 type Package struct {
-	Name        string
-	Description string
-	Version     string
-	Published   string
-	Author      string
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Version     string `json:"version"`
+	Published   string `json:"published"`
+	Author      string `json:"author"`
 }
 
 func NewPackageService(search map[string]interface{}) PackageManager {
 	if search["query"] == "" || search["vendor"] == "" {
-		return nil
+		log.Fatal("query or vendor must not be empty")
 	}
 	vendors := map[string]PackageManager{
 		"npm":      NewNpmPackage(search),
@@ -22,5 +26,9 @@ func NewPackageService(search map[string]interface{}) PackageManager {
 		"composer": NewComposerPackage(search),
 	}
 	selectedVendor := search["vendor"].(string)
+	if _, ok := vendors[selectedVendor]; !ok {
+		log.Fatal("Vendor not found")
+	}
+
 	return vendors[selectedVendor]
 }

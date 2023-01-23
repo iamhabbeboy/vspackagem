@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/iamhabbeboy/packagem-backend/internal/service/packages"
 )
@@ -34,13 +32,13 @@ func (s *SearchHandler) Find(c *gin.Context) {
 			"page":     search.Page,
 			"per_page": limit,
 		}
-		fmt.Println(limit)
 		resp := packages.NewPackageService(data)
 		result, err := resp.GetData()
+
 		if err != nil {
-			c.JSON(405, gin.H{
+			c.JSON(200, gin.H{
 				"status": false,
-				"result": err.Error(),
+				"result": resp,
 			})
 		}
 

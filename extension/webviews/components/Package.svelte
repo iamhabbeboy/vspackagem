@@ -40,13 +40,13 @@
   </div>
   <div style="padding-left: 5px;width:90%">
     <div style="display:flex;justify-content:space-between;width:100%">
-      <b>{pkg.Name}</b>
-      <span>{pkg.Version}</span>
+      <b>{pkg.name}</b>
+      <span>{pkg.version}</span>
     </div>
-    <p>{pkg.Description}</p>
+    <p>{pkg.description}</p>
     <div style="display:flex;justify-content:space-between;width:100%">
-      <p style="padding-top:2px">{pkg.Author}</p>
-      <button class="button-sm" on:click={() => installer(pkg.Name)}
+      <p style="padding-top:2px">{pkg.author}</p>
+      <button class="button-sm" on:click={() => installer(pkg.name)}
         >Install
         {#if isInstalling === true}
           <img
