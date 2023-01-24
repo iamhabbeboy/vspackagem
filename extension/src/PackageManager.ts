@@ -1,25 +1,33 @@
 import * as vscode from "vscode";
-import { packageManagerInfo } from "./constant";
 const { exec } = require("node:child_process");
 const fs = require("fs");
 
 export class PackageManager {
   constructor() {}
-  public install(data: any) {
+  public install(data: string) {
     const [vendor, name, command, module] = this._getPackageInfo(data);
-    const fileName = vscode.window.activeTextEditor?.document.fileName;
-    const f = vscode.workspace.workspaceFolders
-      ?.map((folder) => folder.uri.fsPath)
-      .filter((fsPath) => fileName?.startsWith(fsPath))[0];
-
-    const p = `${f}/${module}`;
-    var cmd = `cd ${f} && ${command}`;
-    if (vendor === "npm" && !fs.existsSync(p)) {
-      //file yarn doesn not exist
-      cmd = `cd ${f} && npm install ${name}`;
+    
+    const workspacePath = this._getWorkspaceFolderPath();
+    const path = `${workspacePath}/${module}`;
+    let cmd = `cd ${workspacePath} && ${command}`;
+    if (vendor === "npm" && !fs.existsSync(path)) {
+      //file yarn doesnt exist
+      cmd = `cd ${workspacePath} && npm install ${name}`;
     }
-
+    
     this._processCommandExecution(name, cmd);
+  }
+
+  private _getWorkspaceFolderPath(fileName: string = ""): string {
+    // TODO: improve to handle vscode workspace directory
+    // TODO: improve to handle package module in sub directory 
+    let folders: string[] = vscode.workspace.workspaceFolders?.map(
+      (folder: vscode.WorkspaceFolder) => folder.uri.fsPath
+    ) || []; 
+    if (fileName !== "" && folders !== undefined) {
+      const tester = folders.filter((folder: string) => fileName?.startsWith(folder));
+    }
+    return folders[0];
   }
 
   private _processCommandExecution(name: string, cmd: string) {
@@ -35,13 +43,13 @@ export class PackageManager {
 
   private _getPackageInfo(data: any) {
     let command, module;
-    let [vendor, name] = data.value.split("::");
+    let [vendor, name] = data.split("::");
     // const packageInfo = packageManagerInfo[vendor];
     // command = packageInfo.manager.length ? packageInfo.manager[]
     switch (vendor) {
       case "npm":
         command = `yarn add ${name}`;
-        module = "yarn.json";
+        module = "yarn.lock";
         break;
       case "goget":
         command = `go get ${name}`;

@@ -24,9 +24,9 @@
 />
 
 <style>
-  .selected {
+  /* .selected {
     opacity: 0.2;
-  }
+  } */
 
   img {
     cursor: pointer;

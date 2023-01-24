@@ -43,7 +43,7 @@
       <b>{pkg.name}</b>
       <span>{pkg.version}</span>
     </div>
-    <p>{pkg.description}</p>
+    <p>{pkg.description.substr(0, 30)}</p>
     <div style="display:flex;justify-content:space-between;width:100%">
       <p style="padding-top:2px">{pkg.author}</p>
       <button class="button-sm" on:click={() => installer(pkg.name)}
