@@ -84,9 +84,12 @@ export class PackageManager {
     return [vendor, name, command, module];
   }
 
-  public getInstalledPackages() {
+  async getInstalledPackages() {
     const workspaceFolder = this._getWorkspaceFolderPath();
     const packageInfo = new PackageInformation(new NpmPackage(workspaceFolder));
-    packageInfo.packageManager.getDependencies();
+    const dependency = await packageInfo.packageManager.getDependencies();
+    const devDpendency = await packageInfo.packageManager.getDevDependencies();
+    const packages = [{ name: "dependencies", package: dependency }, { name: "devdependencies", package: devDpendency }];
+    this._webview.postMessage({ command: "onPackageListed", data: packages });
   }
 }

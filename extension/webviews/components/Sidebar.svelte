@@ -3,6 +3,8 @@
   import Image from "./Image.svelte";
   import Package from "./Package.svelte";
 
+  $: tsvscode.postMessage({ type: "onPackageListing", value: "testing" });
+
   interface PkgType {
     Name: string;
     Description: string;
@@ -27,6 +29,7 @@
   let isLoading: boolean = false;
   let isInstalling: boolean = false;
   let packageInstalled: string = "";
+  let packageList: any = []; //Array<{name: string, package: []}>
 
   const search = async () => {
     if (query === "") {
@@ -47,7 +50,9 @@
         value: string;
     };
   }
+
   onMount(() => {
+    
     window.addEventListener("message", (event: MessageEvent<EventData>) => {
       const message = event.data;
       switch (message.command) {
@@ -55,12 +60,13 @@
           isInstalling = false;
           packageInstalled = message.data.type === "onSuccess" ? message.data.value : "";
           break;
+        case "onPackageListed":
+          packageList = message.data;
+          break;
         default:
           console.log("Unknown message type");
       }
     });
-
-    tsvscode.postMessage({ type: "onPackageListing", value: "testing" });
   });
 
   const handleSelection = (event: any) => {
@@ -108,17 +114,34 @@
     </ul>
   {/if}
 </div>
+{#each packageList as pkg}
 <div class="installed-packages">
-  <h3>Installed JS Packages</h3>
+  <h5>Installed Node Packages ({pkg.name})</h5>
   <ul>
-    <li>Hello world</li>
+    {#each Object.entries((pkg.package)) as [key, value]}
+      <li>{key} - {value}</li>
+    {/each}
   </ul>
 </div>
+{/each}
+
 
 <style>
   ul {
     margin: 0;
     padding: 0;
+  }
+
+  .installed-packages li {
+    list-style: none;
+    margin: 0;
+    padding: 5px 2px;
+  }
+
+  .installed-packages li:hover {
+    background: #ccc;
+    color: #000;
+    cursor: pointer;
   }
 
   .packages {
@@ -129,5 +152,6 @@
   .installed-packages {
     border-top: 1px solid #ccc;
     padding-top: 10px;
+    margin-top: 10px;
   }
 </style>

@@ -2,8 +2,14 @@ const fs = require("fs");
 const path = require("path");
 
 interface PackageInterface {
-  getDependencies(): string[];
-  getDevDependencies(): string[];
+  getDependencies(): Promise<any>;
+  getDevDependencies(): Promise<any>;
+  getJsonData(filePath: string): Promise<any>;
+}
+
+interface NpmPackageType {
+    dependencies: any;
+    devDependencies: any;
 }
 
 export class PackageInformation {
@@ -16,22 +22,33 @@ export class PackageInformation {
 export class NpmPackage implements PackageInterface {
   filePath: string;
   constructor(filePath: string) {
-    this.filePath = path.join(filePath, "package.json");;
+    this.filePath = path.join(filePath, "package.json");
   }
-  getDependencies(): string[] {
-    if (this.filePath === "") {
-      return [];
-    }
-    fs.readFile( this.filePath, { encoding: "utf-8" }, (err: Error, data: any) => {
+
+  getJsonData(filePath: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, "utf8", (err: Error, data: any) => {
         if (err) {
-          console.log("received data: " + data);
-          return false;
+          reject(err);
         }
-       const jsonData = JSON.parse(data);
+        resolve(JSON.parse(data));
+      });
     });
-    return [];
   }
-  getDevDependencies(): string[] {
-    return [];
+
+  async getDependencies(): Promise<any> {
+    if (this.filePath === "") {
+      return false;
+    }
+    const data: NpmPackageType = await this.getJsonData(this.filePath);
+    return data && data.dependencies || {};
+  }
+
+  async getDevDependencies(): Promise<any> {
+    if (this.filePath === "") {
+        return false;
+      }
+      const data: NpmPackageType = await this.getJsonData(this.filePath);
+      return data && data.devDependencies || {};
   }
 }
