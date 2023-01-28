@@ -20,7 +20,7 @@
       "activitybar": [
         {
           "id": "vspackagem-sidebar-view",
-          "title": "VSPackagem",
+          "title": "Packagem",
           "icon": "media/package.svg"
         }
       ]
@@ -30,21 +30,21 @@
         {
           "type": "webview",
           "id": "vspackagem-sidebar",
-          "name": "VSPackagem",
+          "name": "Packagem",
           "icon": "media/package.svg",
-          "contextualTitle": "VSPackagem"
+          "contextualTitle": "Packagem"
         }
       ]
     },
     "commands": [
       {
         "command": "vspackagem.search",
-        "category": "VSpackagem",
+        "category": "packagem",
         "title": "Search & Install Packages"
       },
       {
         "command": "vspackagem.refresh",
-        "category": "VSpackagem",
+        "category": "packagem",
         "title": "Refresh"
       }
     ]

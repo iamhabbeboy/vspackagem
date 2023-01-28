@@ -21,20 +21,28 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-    webviewView.webview.onDidReceiveMessage(async (data) => {
+    webviewView.webview.onDidReceiveMessage( (data) => {
+      const pkg = new PackageManager(webviewView.webview);
       switch (data.type) {
         case "onInstall": {
           if (!data.value) {
             return;
           }
-          new PackageManager().install(data.value);
+          pkg.install(data.value);
+          break;
+        }
+        case "onPackageListing": { 
+          pkg.getInstalledPackages();
           break;
         }
         case "onInfo": {
-          if (!data.value) {
-            return;
-          }
-          vscode.window.showInformationMessage(data.value);
+          // if (!data.value) {
+          //   return;
+          // }
+          // post message to webview
+  
+          return data;
+          // vscode.window.showInformationMessage(data.value);
           break;
         }
         case "onError": {

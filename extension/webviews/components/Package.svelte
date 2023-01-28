@@ -3,6 +3,7 @@
   export let pkg: any;
   export let vendor: string;
   let isInstalling: boolean = false;
+  export let packageInstalled: string;
 
   let img =
     "https://res.cloudinary.com/denj7z5ec/image/upload/v1669411991/js_zgy2wh.png";
@@ -26,11 +27,10 @@
     }
   });
 
-  const installer = (name: string) => {
+  const installer = async (name: string) => {
     isInstalling = true;
     const command = `${vendor}::${name}`;
     tsvscode.postMessage({ type: "onInstall", value: command });
-    isInstalling = false;
   };
 </script>
 
@@ -46,17 +46,21 @@
     <p>{pkg.description.substr(0, 30)}</p>
     <div style="display:flex;justify-content:space-between;width:100%">
       <p style="padding-top:2px">{pkg.author}</p>
-      <button class="button-sm" on:click={() => installer(pkg.name)}
-        >Install
-        {#if isInstalling === true}
-          <img
-            src="https://res.cloudinary.com/denj7z5ec/image/upload/v1673626970/loader_ugnkvf.svg"
-            width="10"
-            height="10"
-            alt=""
-          />
-        {/if}
-      </button>
+      {#if packageInstalled === pkg.name}
+        <button class="button-sm button-disabled" disabled>Installed</button>
+      {:else}
+        <button class="button-sm" on:click={() => installer(pkg.name)}
+          >Install
+          {#if isInstalling === true}
+            <img
+              src="https://res.cloudinary.com/denj7z5ec/image/upload/v1673626970/loader_ugnkvf.svg"
+              width="10"
+              height="10"
+              alt=""
+            />
+          {/if}
+        </button>
+      {/if}
     </div>
   </div>
 </li>
@@ -77,6 +81,11 @@
     padding: 3px;
     width: auto;
     border-radius: 2px;
+  }
+
+  .button-disabled {
+    background: #ccc !important;
+    color: #fff;
   }
 
   img {
