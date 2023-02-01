@@ -1,24 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { PackageProps, PackageType } from "../types/interfaces";
   import Image from "./Image.svelte";
   import Package from "./Package.svelte";
 
   $: tsvscode.postMessage({ type: "onPackageListing", value: "testing" });
 
-  interface PkgType {
-    Name: string;
-    Description: string;
-    Version: string;
-    Published: string;
-    Author: string;
-  }
-
-  interface PkgsType {
-    status: boolean;
-    result: PkgType[];
-  }
-
-  let pkgs: PkgsType = {
+  let pkgs: PackageProps = {
     status: false,
     result: [],
   };
@@ -52,7 +40,6 @@
   }
 
   onMount(() => {
-    
     window.addEventListener("message", (event: MessageEvent<EventData>) => {
       const message = event.data;
       switch (message.command) {
@@ -71,7 +58,6 @@
 
   const handleSelection = (event: any) => {
     vendor = event.detail.lang;
-    // selected = "selected";
   };
 </script>
 

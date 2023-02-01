@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { PackageType } from "../types/interfaces";
   export let pkg: any;
   export let vendor: string;
   let isInstalling: boolean = false;
@@ -27,9 +28,12 @@
     }
   });
 
-  const installer = async (name: string) => {
+  const installer = async (pkg: PackageType) => {
     isInstalling = true;
-    const command = `${vendor}::${name}`;
+    let command = `${vendor}::${pkg.name}`;
+    if(pkg.reference) {
+      command += `::${pkg.reference}`; 
+    }
     tsvscode.postMessage({ type: "onInstall", value: command });
   };
 </script>
@@ -49,7 +53,7 @@
       {#if packageInstalled === pkg.name}
         <button class="button-sm button-disabled" disabled>Installed</button>
       {:else}
-        <button class="button-sm" on:click={() => installer(pkg.name)}
+        <button class="button-sm" on:click={() => installer(pkg)}
           >Install
           {#if isInstalling === true}
             <img

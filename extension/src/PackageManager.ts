@@ -17,9 +17,17 @@ export class PackageManager {
     const workspacePath = this._getWorkspaceFolderPath();
     const path = `${workspacePath}/${module}`;
     let cmd = `cd ${workspacePath} && ${command}`;
-    if (vendor === "npm" && !fs.existsSync(path)) {
-      //file yarn doesnt exist
-      cmd = `cd ${workspacePath} && npm install ${name}`;
+
+    switch(true) {
+      case (vendor === "npm" && !fs.existsSync(path)): {
+        //file yarn doesnt exist
+        cmd = `cd ${workspacePath} && npm install ${name}`;
+        break;
+      }
+      case (vendor === "goget" && !fs.existsSync(path)): {
+        cmd = `cd ${workspacePath} && go mod init main && ${command}`;
+        break;
+      }
     }
 
     this._processCommandExecution(name, cmd);
@@ -64,7 +72,7 @@ export class PackageManager {
 
   private _getPackageInfo(data: any) {
     let command, module;
-    let [vendor, name] = data.split("::");
+    let [vendor, name, reference] = data.split("::");
     // const packageInfo = packageManagerInfo[vendor];
     // command = packageInfo.manager.length ? packageInfo.manager[]
     switch (vendor) {
@@ -73,7 +81,7 @@ export class PackageManager {
         module = "yarn.lock";
         break;
       case "goget":
-        command = `go get ${name}`;
+        command = `go get ${reference}`;
         module = "go.mod";
         break;
       default:
