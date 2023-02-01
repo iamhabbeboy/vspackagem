@@ -14,6 +14,7 @@ type Package struct {
 	Version     string `json:"version"`
 	Published   string `json:"published"`
 	Author      string `json:"author"`
+	Reference   string `json:"reference,omitempty"`
 }
 
 func NewPackageService(search map[string]interface{}) PackageManager {

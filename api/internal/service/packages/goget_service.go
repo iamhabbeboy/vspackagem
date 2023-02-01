@@ -2,6 +2,7 @@ package packages
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gocolly/colly"
 )
@@ -32,11 +33,17 @@ func (param *GoGetPackageHandler) GetData() ([]Package, error) {
 		version := e.ChildText("span.go-textSubtle strong")
 		publish := e.ChildText("span[data-test-id=snippet-published] strong")
 
+		splitPg := strings.Split(pkgName, "\n")
+		name := strings.TrimSpace(splitPg[0])
+		githubURl := strings.TrimSpace(splitPg[1][1 : len(splitPg[1])-1])
+		githubURl = strings.Trim(githubURl, "(")
+
 		res := Package{
-			Name:        pkgName,
+			Name:        name,
 			Version:     version,
 			Published:   publish,
 			Description: description,
+			Reference:   githubURl,
 		}
 
 		pkgs = append(pkgs, res)
